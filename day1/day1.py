@@ -29,12 +29,12 @@ class Lock:
 
         if direction == "R":
             # if rotated over 99 - count 1
-            if ((self.pos + count) % 100) != (self.pos + count):
+            if self.pos + count > 99:
                 self.result += 1
             self.pos = (self.pos + count) % 100
         elif direction == "L":
             # if didnt start at 0 and [ rotated over 0 or ended at 0 ] - count 1
-            if (self.pos != 0 and ((self.pos - count) % 100) != (self.pos - count) or (self.pos - count) == 0):
+            if self.pos != 0 and self.pos - count <= 0:
                 self.result += 1
             self.pos = (self.pos - count) % 100
 
