@@ -64,22 +64,38 @@ for i in range(len(points)):
         xstep = 1 if x2 > x1 else -1
         for x in range(x1, x2 + xstep, xstep):
             boundary.add((x, y1))
-print(boundary)
+# print(boundary)
 
+# For quick corner checks, calculate max xvalues for all y
+polygon = {}
+for x, y in boundary:
+    if y in polygon:
+        minx, maxx = polygon[y]
+        polygon[y] = (min(minx, x), max(maxx, x))
+    else:
+        polygon[y] = (x, x)
 
-for y in range(9):
-    line = ""
-    for x in range(15):
-        if (x, y) in boundary:
-            if (x, y) == (11, 7) or (x, y) == (10,7):
-                line += "O"
-            else:
-                line += "#"
-        else:
-            line += "."
-    print(line)
+# for y in range(9):
+#     line = ""
+#     for x in range(15):
+#         if (x, y) in boundary:
+#             if (x, y) == (11, 7) or (x, y) == (10,7):
+#                 line += "O"
+#             else:
+#                 line += "#"
+#         else:
+#             line += "."
+#     print(line)
 
 def walk(x1, y1, x2, y2):
+    # Check if corners inside
+    if y1 not in polygon or y2 not in polygon:
+        return False
+    if x2 < polygon[y1][0] or x2 > polygon[y1][1]:
+        return False
+    if x1 < polygon[y2][0] or x1 > polygon[y2][1]:
+        return False
+
     xstep = 1 if x2 > x1 else -1
     ystep = 1 if y2 > y1 else -1
     # Check from x1 -> x2 at y1
@@ -162,22 +178,12 @@ def walk(x1, y1, x2, y2):
                 else:
                     print("what? ({},{})".format(x2, y))
             inbound = False
-    print("Done")
     return True
 
 for key in keys:
-    # I know its lower
-    if key > 2836062672:
-        continue
     (x1, y1), (x2, y2) = database[key]
-    # Split found from image
-    split=94697
-    if y1 > split and y2 < split:
-        continue
-    if y1 < split and y2 > split:
-        continue
 
-    print("Checking ({},{})-({},{}): {}".format(x1,y1,x2,y2,key))
+    # print("Checking ({},{})-({},{}): {}".format(x1,y1,x2,y2,key))
     # traverse line
     if walk(x1, y1, x2, y2):
         part2 = key
